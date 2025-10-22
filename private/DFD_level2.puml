@@ -1,0 +1,26 @@
+@startuml
+!pragma layout smetana
+top to bottom direction
+skinparam packageStyle rectangle
+skinparam handwritten false
+
+rectangle "P3.1 Prepare inputs\n(set start node, init structures)" as P31
+rectangle "P3.2 Run all algorithm(s)\n(Backtracking / Greedy / DP)" as P32
+rectangle "P3.3 Store all results\n(Routes[], Costs[], Times[])" as P33
+
+database "D1: Input Data\n(n, cost matrix, params)" as D1
+database "D2: Results Store\n(routes[], costs[], times[])" as D2
+
+title DFD Level 2 - Decompose Execute Algorithm(s)
+
+' flows
+D1 --> P31 : Read validated input
+P31 --> P32 : Prepared input & params
+P32 --> P33 : Raw algorithm outputs (routes, costs, times)
+P33 --> D2  : Write all results
+P32 --> D2  : (optional/stream) Write per-algo results
+
+' Optional flows back to P31 if reconfiguration is needed (e.g. restart)
+P31 <-- P33 : feedback (e.g., adjust params if needed)
+
+@enduml

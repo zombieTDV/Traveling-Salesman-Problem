@@ -1,0 +1,36 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam packageStyle rectangle
+skinparam handwritten false
+
+actor User
+
+rectangle "P1: Input & Validate" as P1
+rectangle "P2: Choose Algorithm" as P2
+rectangle "P3: Execute Algorithm(s)" as P3
+rectangle "P4: Evaluate & Return Result" as P4
+
+database "D1: Input Data\n(file / raw input)" as D1
+database "D2: Results Store\n(routes[], costs[], times[])" as D2
+
+title DFD Level 1 - Main Processes
+
+' External interactions
+User --> P1 : Submit input file / keyboard input
+P1 --> D1 : Store parsed input
+P1 --> P3 : Validated input (n, matrix, params)
+
+' Algorithm selection
+User --> P2 : Select algorithm(s) & params
+P2 --> P3 : Algorithm choice / settings
+
+' Execution and storage
+P3 --> D2 : Store results (routes, costs, times)
+P3 --> P4 : Raw results (routes, costs, times)
+
+' Evaluation and output
+P4 --> User : Display/Export results (best route, cost, runtime)
+P4 --> D2 : Optionally save final report
+
+@enduml
