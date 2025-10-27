@@ -1,26 +1,29 @@
 #include "utils/cityMap.cpp"
 
-// ----------------- tiny demo -----------------
+// ---------------- DEMO ----------------
 int main() {
-    CityMap cm(4, 0); // 4x4, start at city 0
+    int n;
+    cout << "Enter number of cities: ";
+    cout.flush();
+    cin >> n;
 
-    // simple symmetric example
-    cm.setCost(0,1,10); cm.setCost(1,0,10);
-    cm.setCost(0,2,15); cm.setCost(2,0,15);
-    cm.setCost(0,3,20); cm.setCost(3,0,20);
-    cm.setCost(1,2,35); cm.setCost(2,1,35);
-    cm.setCost(1,3,25); cm.setCost(3,1,25);
-    cm.setCost(2,3,30); cm.setCost(3,2,30);
+    CityMap cm(n, 0);
+    cm.inputCosts();
+    cm.printMatrix();
 
-    cout << "Start at city " << cm.current() << "\n";
-    cout << "Move 1: " << (cm.move(1) ? "ok" : "fail") << "\n";
-    cout << "Move 2: " << (cm.move(2) ? "ok" : "fail") << "\n";
-    cout << "Undo last: " << (cm.undoMove() ? "undone" : "nothing") << "\n";
-    cout << "Move 3: " << (cm.move(3) ? "ok" : "fail") << "\n";
+    cout << "Starting at city " << cm.current() << "\n";
+
+    int next;
+    cout << "\nEnter next city to move to: ";
+    cout.flush();
+    cin >> next;
+
+    if (cm.move(next))
+        cout << "Moved successfully! Total cost = " << cm.getTotalCost() << "\n";
+    else
+        cout << "Invalid move.\n";
 
     cout << "Path: ";
     for (int v : cm.getPath()) cout << v << " ";
-    cout << "\nTotal cost: " << cm.getTotalCost() << "\n";
-
-    return 0;
+    cout << "\n";
 }

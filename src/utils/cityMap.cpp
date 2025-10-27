@@ -45,6 +45,33 @@ public:
         return cost[i][j];
     }
 
+    // Read cost matrix from user input
+    void inputCosts() {
+        cout << "\n=== Enter cost matrix (" << n << "x" << n << ") ===\n";
+        cout << "Use 'X' for no path. Diagonal values are set to 0 automatically.\n\n";
+
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (i == j) {
+                    cost[i][j] = 0;
+                    continue; // skip input for diagonals
+                }
+
+                string val;
+                cout << "Cost from city " << i << " → " << j << ": ";
+                cout.flush(); // makes prompt appear immediately (flashing effect)
+                cin >> val;
+
+                if (val == "X" || val == "x") {
+                    cost[i][j] = -1;
+                } else {
+                    cost[i][j] = stoll(val);
+                }
+            }
+        }
+        cout << "\nMatrix input complete!\n\n";
+    }
+
     // Reset runtime state (does not clear cost matrix)
     void reset() {
         visited.assign(n, false);
@@ -84,6 +111,17 @@ public:
         path.pop_back();
         currentCity = prev;
         return true;
+    }
+
+    // Optional: print the matrix for debugging
+    void printMatrix() const {
+        cout << "Cost matrix:\n";
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                cout << cost[i][j] << " ";
+            }
+            cout << "\n";
+        }
     }
 
     // Accessors
