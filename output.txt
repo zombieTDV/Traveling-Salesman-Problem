@@ -1,2 +1,2 @@
-Best cost: 10
-Route: 0 1 2 0 
+Best cost: 28
+Route: 0 1 0 

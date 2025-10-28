@@ -1,9 +1,6 @@
 #include "utils/algorithms.h"
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
     try {
         cout << "=== Travel Route Optimization ===\n";
         int n;
@@ -20,19 +17,13 @@ int main() {
         // interactive input matrix (enforces non-negative numeric entries)
         city.inputCosts();
         city.printMatrix();
-
-        int start;
-        while (true) {
-            cout << "Enter start city index (0.." << n-1 << "), default 0: ";
-            cout.flush();
-            if (!(cin >> start)) { start = 0; break; }
-            if (start >= 0 && start < n) break;
-            cout << "  [Error] out of range. Try again.\n";
-        }
+        
+        int start = 0;
         city.setStart(start);
 
         // run 3 algorithms
         cout << "\nRunning Greedy (NN)...\n";
+        cout << "Start at (0,0) \n";
         auto g = Algorithms::greedy(city, start);
         if (g.second < 0.0) cout << "Greedy: failed\n";
         else {
@@ -42,8 +33,9 @@ int main() {
         }
 
         // write best to output.txt if any found
-        double bestC = 1e300; vector<int> bestR;
-        auto consider = [&](const pair<vector<int>,double>& p){
+        float bestC = 1e18; 
+        vector<int> bestR;
+        auto consider = [&](const pair<vector<int>,float>& p){
             if (p.second >= 0.0 && p.second < bestC) { bestC = p.second; bestR = p.first; }
         };
         consider(g);
