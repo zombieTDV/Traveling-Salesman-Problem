@@ -5,6 +5,8 @@ __pycache__/
 *.so
 *.exe
 
+private
+
 # Distribution / packaging
 .Python
 build/
