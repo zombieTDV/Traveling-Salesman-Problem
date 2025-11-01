@@ -4,6 +4,7 @@ const float BIG = 1e18;
 
 class Algorithms {
     private:
+    //Backtracking algorithms
         void backtracking_slove (CityMap& cost_city, int start, int start_city, float&min_cost, vector <int>&best_path)
     {
         int n = cost_city.getN();
