@@ -31,7 +31,16 @@ int main() {
             for (int v: g.first) {cout << v << " "; }
             cout << "\n";
         }
-
+        cout << "\nRunning Backtracking...\n";
+        cout << "Start at (0,0) \n";
+        Algorithms a;
+        auto b = a.backtracking(city);
+        if (b.second < 0.0) cout << "Backtracking: failed\n";
+        else {
+            cout << "Backtracking cost: " << b.second << "\nRoute: ";
+            for (int v: b.first) {cout << v << " "; }
+            cout << "\n";
+        }
         // write best to output.txt if any found
         float bestC = 1e18; 
         vector<int> bestR;
