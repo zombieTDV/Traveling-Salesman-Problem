@@ -72,28 +72,6 @@ TEST_CASE("greedy runtime moderate n=15") {
 }
 
 
-TEST_CASE("greedy runtime moderate n=15") {
-    int size = 15;
-    CityMap city(size, 0);
-    for (int i = 0; i < size; ++i) {
-        for (int j = 0; j < size; ++j) {
-            if (i == j) city.setCost(i, j, 0);
-            else city.setCost(i, j, (i + j) % 50 + 1);
-        }
-    }
-    // city.printMatrix();
-    city.setStart(0);
-
-    auto t1 = std::chrono::high_resolution_clock::now();
-    auto result = Algorithms::greedy(city, 0);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> sec = t2 - t1;
-
-    CHECK(result.second >= 0.0);
-    std::cout << "Greedy (n=" << size << ") took " << sec.count() << " seconds\n";
-    // Relaxed threshold so it's less brittle:
-    // CHECK(sec.count() < 0.1);     
-}
 TEST_CASE("backtracking 4x4") {
     CityMap city(4, 0);
 
