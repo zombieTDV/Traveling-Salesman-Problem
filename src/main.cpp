@@ -41,6 +41,22 @@ int main() {
             for (int v: b.first) {cout << v << " "; }
             cout << "\n";
         }
+        cout << "\nRunning Bitmask DP...\n";
+        cout << "Start at (0,0) \n";
+        pair<vector<int>, float> dp;
+        try {
+            dp = Algorithms::bitmaskDP(city, start);
+            if (dp.second < 0.0) cout << "Bitmask DP: failed\n";
+            else {
+                cout << "Bitmask DP cost: " << dp.second << "\nRoute: ";
+                for (int v : dp.first) { cout << v << " "; }
+                cout << "\n";
+            }
+        }
+        catch (const exception& e) {
+            cout << "Bitmask DP: failed (" << e.what() << ")\n";
+            dp = { {}, -1.0 };
+        }
         // write best to output.txt if any found
         float bestC = 1e18; 
         vector<int> bestR;
@@ -48,6 +64,7 @@ int main() {
             if (p.second >= 0.0 && p.second < bestC) { bestC = p.second; bestR = p.first; }
         };
         consider(g);
+        consider(dp);
         if (!bestR.empty()) {
             ofstream fout("output.txt");
             fout << "Best cost: " << bestC << "\nRoute: ";
