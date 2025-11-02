@@ -145,3 +145,68 @@ TEST_CASE("backtracking runtime small n=10") {
     // Kiểm tra xem nó có chạy trong thời gian hợp lý không (ví dụ: < 5 giây)
     CHECK(sec.count() < 5.0); 
 }
+TEST_CASE("bitmask DP 4x4") {
+    CityMap city(4, 0);
+
+    city.setCost(0, 1, 10);
+    city.setCost(0, 2, 12);
+    city.setCost(0, 3, 8);
+
+    city.setCost(1, 0, 10);
+    city.setCost(1, 2, 15);
+    city.setCost(1, 3, 11);
+
+    city.setCost(2, 0, 12);
+    city.setCost(2, 1, 15);
+    city.setCost(2, 3, 14);
+
+    city.setCost(3, 0, 8);
+    city.setCost(3, 1, 11);
+    city.setCost(3, 2, 14);
+
+    city.setStart(0);
+
+    auto result = Algorithms::bitmaskDP(city, 0);
+
+    CHECK(result.second >= 0.0);
+    CHECK(result.first.size() == 5);           
+    CHECK(result.first.front() == 0);     
+    CHECK(result.first.back() == 0);         
+
+
+    CHECK(result.second == Approx(46));
+
+
+    std::set<int> visited(result.first.begin(), result.first.end());
+    CHECK(visited.size() == 4); 
+
+    std::set<int> middle(result.first.begin() + 1, result.first.end() - 1);
+    CHECK(middle.size() == 3); 
+
+    cout << "Bitmask DP route: \n";
+    for (int v : result.first) std::cout << v << " ";
+    std::cout << std::endl;
+}
+
+TEST_CASE("bitmask DP runtime small n=10") {
+    int size = 10;
+    CityMap city(size, 0);
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            if (i == j) city.setCost(i, j, 0);
+            else city.setCost(i, j, (i + j) % 50 + 1);
+        }
+    }
+    city.setStart(0);
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto result = Algorithms::bitmaskDP(city, 0); 
+    auto t2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> sec = t2 - t1;
+
+    CHECK(result.second >= 0.0);
+    std::cout << "Bitmask DP (n=" << size << ") took " << sec.count() << " seconds\n";
+
+    // Kiểm tra xem nó có chạy nhanh không (ví dụ: < 1 giây)
+    CHECK(sec.count() < 1.0);
+}
