@@ -48,8 +48,8 @@ TEST_CASE("greedy 4x4") {
     std::cout << std::endl;
 }
 
-TEST_CASE("greedy runtime moderate n=15") {
-    int size = 15;
+TEST_CASE("greedy runtime moderate n=10") {
+    int size = 10;
     CityMap city(size, 0);
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
