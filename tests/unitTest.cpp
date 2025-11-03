@@ -9,21 +9,21 @@ using namespace doctest;
 TEST_CASE("greedy 4x4") {
     CityMap city(4, 0);
 
-    city.setCost(0,1,10);
-    city.setCost(0,2,12);
-    city.setCost(0,3, 8);
+    city.setCost(0,1,20);
+    city.setCost(0,2,42);
+    city.setCost(0,3, 35);
 
-    city.setCost(1,0,10);
-    city.setCost(1,2,15);
-    city.setCost(1,3,11);
+    city.setCost(1,0,20);
+    city.setCost(1,2,30);
+    city.setCost(1,3,34);
 
-    city.setCost(2,0,12);
-    city.setCost(2,1,15);
-    city.setCost(2,3,14);
+    city.setCost(2,0,42);
+    city.setCost(2,1,30);
+    city.setCost(2,3,12);
 
-    city.setCost(3,0,8);
-    city.setCost(3,1,11);
-    city.setCost(3,2,14);
+    city.setCost(3,0,35);
+    city.setCost(3,1,34);
+    city.setCost(3,2,12);
 
 
     city.setStart(0);
@@ -75,21 +75,21 @@ TEST_CASE("greedy runtime moderate n=10") {
 TEST_CASE("backtracking 4x4") {
     CityMap city(4, 0);
 
-    city.setCost(0,1,10);
-    city.setCost(0,2,12);
-    city.setCost(0,3, 8);
+    city.setCost(0,1,20);
+    city.setCost(0,2,42);
+    city.setCost(0,3, 35);
 
-    city.setCost(1,0,10);
-    city.setCost(1,2,15);
-    city.setCost(1,3,11);
+    city.setCost(1,0,20);
+    city.setCost(1,2,30);
+    city.setCost(1,3,34);
 
-    city.setCost(2,0,12);
-    city.setCost(2,1,15);
-    city.setCost(2,3,14);
+    city.setCost(2,0,42);
+    city.setCost(2,1,30);
+    city.setCost(2,3,12);
 
-    city.setCost(3,0,8);
-    city.setCost(3,1,11);
-    city.setCost(3,2,14);
+    city.setCost(3,0,35);
+    city.setCost(3,1,34);
+    city.setCost(3,2,12);
 
     city.setStart(0);
 
@@ -148,21 +148,21 @@ TEST_CASE("backtracking runtime small n=10") {
 TEST_CASE("bitmask DP 4x4") {
     CityMap city(4, 0);
 
-    city.setCost(0, 1, 10);
-    city.setCost(0, 2, 12);
-    city.setCost(0, 3, 8);
+    city.setCost(0,1,20);
+    city.setCost(0,2,42);
+    city.setCost(0,3, 35);
 
-    city.setCost(1, 0, 10);
-    city.setCost(1, 2, 15);
-    city.setCost(1, 3, 11);
+    city.setCost(1,0,20);
+    city.setCost(1,2,30);
+    city.setCost(1,3,34);
 
-    city.setCost(2, 0, 12);
-    city.setCost(2, 1, 15);
-    city.setCost(2, 3, 14);
+    city.setCost(2,0,42);
+    city.setCost(2,1,30);
+    city.setCost(2,3,12);
 
-    city.setCost(3, 0, 8);
-    city.setCost(3, 1, 11);
-    city.setCost(3, 2, 14);
+    city.setCost(3,0,35);
+    city.setCost(3,1,34);
+    city.setCost(3,2,12);
 
     city.setStart(0);
 
