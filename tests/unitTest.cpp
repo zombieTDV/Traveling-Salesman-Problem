@@ -66,7 +66,7 @@ TEST_CASE("greedy runtime moderate n=10") {
     std::chrono::duration<double> sec = t2 - t1;
 
     CHECK(result.second >= 0.0);
-    std::cout << "Greedy (n=" << size << ") took " << sec.count() << " seconds\n";
+    std::cout << "Greedy (n=" << size << ") took " << sec.count()*1000 << " ms\n\n";
     // Relaxed threshold so it's less brittle:
     // CHECK(sec.count() < 0.1); 
 }
@@ -140,7 +140,7 @@ TEST_CASE("backtracking runtime small n=10") {
     std::chrono::duration<double> sec = t2 - t1;
 
     CHECK(result.second >= 0.0);
-    std::cout << "Backtracking (n=" << size << ") took " << sec.count() << " seconds\n";
+    std::cout << "Backtracking (n=" << size << ") took " << sec.count()*1000 << " ms\n\n";
     
     // Kiểm tra xem nó có chạy trong thời gian hợp lý không (ví dụ: < 5 giây)
     CHECK(sec.count() < 5.0); 
@@ -205,7 +205,7 @@ TEST_CASE("bitmask DP runtime small n=10") {
     std::chrono::duration<double> sec = t2 - t1;
 
     CHECK(result.second >= 0.0);
-    std::cout << "Bitmask DP (n=" << size << ") took " << sec.count() << " seconds\n";
+    std::cout << "Bitmask DP (n=" << size << ") took " << sec.count()*1000 << " ms\n\n";
 
     // Kiểm tra xem nó có chạy nhanh không (ví dụ: < 1 giây)
     CHECK(sec.count() < 1.0);
