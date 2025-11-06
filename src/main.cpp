@@ -1,78 +1,140 @@
 #include "utils/algorithms.h"
+#include <fstream>
+#include <chrono>
+#include <iomanip>
 
 int main() {
+    const string inputFile = "input.txt";
+    const string outputFile = "output.txt";
+
     try {
-        cout << "=== Travel Route Optimization ===\n";
+        // Read from input.txt
+        ifstream fin(inputFile);
+        if (!fin) {
+            cerr << "Error: Cannot open input.txt\n";
+            return 1;
+        }
+
         int n;
-        while (true) {
-            cout << "Enter number of cities (n >= 2): ";
-            cout.flush();
-            if (!(cin >> n)) { cerr << "Invalid input\n"; return 1; }
-            if (n >= 2) break;
-            cout << "  [Error] n must be >= 2. Try again.\n";
+        fin >> n;
+        
+        if (n < 2) {
+            cerr << "Error: n must be >= 2\n";
+            return 1;
         }
 
         CityMap city(n, 0);
-
-        // interactive input matrix (enforces non-negative numeric entries)
-        city.inputCosts();
-        city.printMatrix();
         
+        // Read cost matrix from file
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                float cost;
+                fin >> cost;
+                city.setCost(i, j, cost);
+            }
+        }
+        fin.close();
+
         int start = 0;
         city.setStart(start);
 
-        // run 3 algorithms
-        cout << "\nRunning Greedy (NN)...\n";
-        cout << "Start at (0,0) \n";
-        auto g = Algorithms::greedy(city, start);
-        if (g.second < 0.0) cout << "Greedy: failed\n";
-        else {
-            cout << "Greedy cost: " << g.second << "\nRoute: ";
-            for (int v: g.first) {cout << v << " "; }
-            cout << "\n";
+        // Open output file
+        ofstream fout(outputFile);
+        if (!fout) {
+            cerr << "Error: Cannot open output.txt\n";
+            return 1;
         }
-        cout << "\nRunning Backtracking...\n";
-        cout << "Start at (0,0) \n";
-        Algorithms a;
-        auto b = a.backtracking(city);
-        if (b.second < 0.0) cout << "Backtracking: failed\n";
-        else {
-            cout << "Backtracking cost: " << b.second << "\nRoute: ";
-            for (int v: b.first) {cout << v << " "; }
-            cout << "\n";
-        }
-        cout << "\nRunning Bitmask DP...\n";
-        cout << "Start at (0,0) \n";
+
+        // Run all algorithms and store results
+        auto startTime = chrono::high_resolution_clock::now();
+        Algorithms algo;
+        auto backtrack = algo.backtracking(city);
+        auto endTime = chrono::high_resolution_clock::now();
+        auto backtrackTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+
+        startTime = chrono::high_resolution_clock::now();
+        auto greedy = Algorithms::greedy(city, start);
+        endTime = chrono::high_resolution_clock::now();
+        auto greedyTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+
+        startTime = chrono::high_resolution_clock::now();
         pair<vector<int>, float> dp;
+        long long dpTime = 0;
+        bool dpSuccess = true;
         try {
             dp = Algorithms::bitmaskDP(city, start);
-            if (dp.second < 0.0) cout << "Bitmask DP: failed\n";
-            else {
-                cout << "Bitmask DP cost: " << dp.second << "\nRoute: ";
-                for (int v : dp.first) { cout << v << " "; }
-                cout << "\n";
+            endTime = chrono::high_resolution_clock::now();
+            dpTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+        } catch (const exception& e) {
+            endTime = chrono::high_resolution_clock::now();
+            dpTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+            dpSuccess = false;
+        }
+
+        // Find minimum cost
+        float minCost = 1e18;
+        if (backtrack.second >= 0.0) minCost = min(minCost, backtrack.second);
+        if (greedy.second >= 0.0) minCost = min(minCost, greedy.second);
+        if (dpSuccess && dp.second >= 0.0) minCost = min(minCost, dp.second);
+
+        // Write Backtracking results
+        fout << "====BACKTRACKING====\n";
+        if (backtrack.second >= 0.0) {
+            if (backtrack.second == minCost) {
+                fout << "Chi phí tối thiểu: " << static_cast<int>(backtrack.second) << "\n";
+            } else {
+                fout << "Chi phí: " << static_cast<int>(backtrack.second) << "\n";
             }
-        }
-        catch (const exception& e) {
-            cout << "Bitmask DP: failed (" << e.what() << ")\n";
-            dp = { {}, -1.0 };
-        }
-        // write best to output.txt if any found
-        float bestC = 1e18; 
-        vector<int> bestR;
-        auto consider = [&](const pair<vector<int>,float>& p){
-            if (p.second >= 0.0 && p.second < bestC) { bestC = p.second; bestR = p.first; }
-        };
-        consider(g);
-        consider(dp);
-        if (!bestR.empty()) {
-            ofstream fout("output.txt");
-            fout << "Best cost: " << bestC << "\nRoute: ";
-            for (int v: bestR) fout << v << " ";
+            fout << "Lộ trình: ";
+            for (int v : backtrack.first) {
+                fout << v << " ";
+            }
             fout << "\n";
-            fout.close();
-            cout << "\nWrote best result to output.txt\n";
-        } else cout << "\nNo valid tour found by any algorithm.\n";
+        } else {
+            fout << "Không tìm thấy lộ trình\n";
+        }
+        fout << "Thời gian: " << backtrackTime << " ms\n";
+
+        // Write Greedy results
+        fout << "==== GREEDY ====\n";
+        if (greedy.second >= 0.0) {
+            if (greedy.second == minCost) {
+                fout << "Chi phí tối thiểu: " << static_cast<int>(greedy.second) << "\n";
+            } else {
+                fout << "Chi phí: " << static_cast<int>(greedy.second) << "\n";
+            }
+            fout << "Lộ trình: ";
+            for (int v : greedy.first) {
+                fout << v << " ";
+            }
+            fout << "\n";
+        } else {
+            fout << "Không tìm thấy lộ trình\n";
+        }
+        fout << "Thời gian: " << greedyTime << " ms\n";
+
+        // Write DP results
+        fout << "==== DP ====\n";
+        if (dpSuccess && dp.second >= 0.0) {
+            if (dp.second == minCost) {
+                fout << "Chi phí tối thiểu: " << static_cast<int>(dp.second) << "\n";
+            } else {
+                fout << "Chi phí: " << static_cast<int>(dp.second) << "\n";
+            }
+            fout << "Lộ trình: ";
+            for (int v : dp.first) {
+                fout << v << " ";
+            }
+            fout << "\n";
+        } else if (!dpSuccess) {
+            fout << "Không tìm thấy lộ trình\n";
+        } else {
+            fout << "Không tìm thấy lộ trình\n";
+        }
+        fout << "Thời gian: " << dpTime << " ms\n";
+
+        fout.close();
+        cout << "Kết quả chạy đã được viết vào output.txt !\n";
 
     } catch (const exception &e) {
         cerr << "[Error] " << e.what() << "\n";
