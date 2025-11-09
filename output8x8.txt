@@ -1,0 +1,15 @@
+==== GREEDY ====
+Chi phí: 263
+Lộ trình: 0 7 2 4 3 5 1 6 0 
+Thời gian: 0.009 ms
+
+==== BACKTRACKING ====
+Chi phí tối thiểu: 235
+Lộ trình: 0 4 3 5 6 1 2 7 0 
+Thời gian: 2.3036 ms
+
+==== DP ====
+Chi phí tối thiểu: 235
+Lộ trình: 0 7 2 1 6 5 3 4 0 
+Thời gian: 0.2212 ms
+

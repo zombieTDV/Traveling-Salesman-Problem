@@ -4,11 +4,10 @@
 #include <iomanip>
 
 int main() {
-    const string inputFile = "input.txt";
-    const string outputFile = "output.txt";
+    const string inputFile = "input8x8.txt";
+    const string outputFile = "output8x8.txt";
 
     try {
-        // Read from input.txt
         ifstream fin(inputFile);
         if (!fin) {
             cerr << "Error: Cannot open input.txt\n";
@@ -17,15 +16,12 @@ int main() {
 
         int n;
         fin >> n;
-        
         if (n < 2) {
             cerr << "Error: n must be >= 2\n";
             return 1;
         }
 
         CityMap city(n, 0);
-        
-        // Read cost matrix from file
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 float cost;
@@ -38,100 +34,84 @@ int main() {
         int start = 0;
         city.setStart(start);
 
-        // Open output file
         ofstream fout(outputFile);
         if (!fout) {
             cerr << "Error: Cannot open output.txt\n";
             return 1;
         }
 
-        // Run all algorithms and store results
-        auto startTime = chrono::high_resolution_clock::now();
+        fout << fixed << setprecision(3); // hiển thị 3 chữ số sau dấu phẩy
+
         Algorithms algo;
-        auto backtrack = algo.backtracking(city);
-        auto endTime = chrono::high_resolution_clock::now();
-        auto backtrackTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
 
-        startTime = chrono::high_resolution_clock::now();
+        // === GREEDY ===
+        auto startTime = chrono::high_resolution_clock::now();
         auto greedy = Algorithms::greedy(city, start);
-        endTime = chrono::high_resolution_clock::now();
-        auto greedyTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+        auto endTime = chrono::high_resolution_clock::now();
+        double greedyTime = chrono::duration<double, std::milli>(endTime - startTime).count();
 
+        // === BACKTRACKING ===
+        startTime = chrono::high_resolution_clock::now();
+        auto backtrack = algo.backtracking(city);
+        endTime = chrono::high_resolution_clock::now();
+        double backtrackTime = chrono::duration<double, std::milli>(endTime - startTime).count();
+
+        // === BITMASK DP ===
         startTime = chrono::high_resolution_clock::now();
         pair<vector<int>, float> dp;
-        long long dpTime = 0;
+        double dpTime = 0;
         bool dpSuccess = true;
         try {
             dp = Algorithms::bitmaskDP(city, start);
             endTime = chrono::high_resolution_clock::now();
-            dpTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+            dpTime = chrono::duration<double, std::milli>(endTime - startTime).count();
         } catch (const exception& e) {
             endTime = chrono::high_resolution_clock::now();
-            dpTime = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+            dpTime = chrono::duration<double, std::milli>(endTime - startTime).count();
             dpSuccess = false;
         }
 
         // Find minimum cost
         float minCost = 1e18;
-        if (backtrack.second >= 0.0) minCost = min(minCost, backtrack.second);
         if (greedy.second >= 0.0) minCost = min(minCost, greedy.second);
+        if (backtrack.second >= 0.0) minCost = min(minCost, backtrack.second);
         if (dpSuccess && dp.second >= 0.0) minCost = min(minCost, dp.second);
 
-        // Write Backtracking results
-        fout << "====BACKTRACKING====\n";
-        if (backtrack.second >= 0.0) {
-            if (backtrack.second == minCost) {
-                fout << "Chi phí tối thiểu: " << static_cast<int>(backtrack.second) << "\n";
-            } else {
-                fout << "Chi phí: " << static_cast<int>(backtrack.second) << "\n";
-            }
-            fout << "Lộ trình: ";
-            for (int v : backtrack.first) {
-                fout << v << " ";
-            }
-            fout << "\n";
-        } else {
-            fout << "Không tìm thấy lộ trình\n";
-        }
-        fout << "Thời gian: " << backtrackTime << " ms\n";
-
-        // Write Greedy results
+        // === GREEDY ===
         fout << "==== GREEDY ====\n";
         if (greedy.second >= 0.0) {
-            if (greedy.second == minCost) {
-                fout << "Chi phí tối thiểu: " << static_cast<int>(greedy.second) << "\n";
-            } else {
-                fout << "Chi phí: " << static_cast<int>(greedy.second) << "\n";
-            }
+            if (greedy.second == minCost) fout << "Chi phí tối thiểu: ";
+            else fout << "Chi phí: ";
+            fout << static_cast<int>(greedy.second) << "\n";
             fout << "Lộ trình: ";
-            for (int v : greedy.first) {
-                fout << v << " ";
-            }
+            for (int v : greedy.first) fout << v << " ";
             fout << "\n";
-        } else {
-            fout << "Không tìm thấy lộ trình\n";
-        }
-        fout << "Thời gian: " << greedyTime << " ms\n";
+        } else fout << "Không tìm thấy lộ trình\n";
+        fout << "Thời gian: " << greedyTime << " ms\n\n";
 
-        // Write DP results
+        // === BACKTRACKING ===
+        fout << "==== BACKTRACKING ====\n";
+        if (backtrack.second >= 0.0) {
+            if (backtrack.second == minCost) fout << "Chi phí tối thiểu: ";
+            else fout << "Chi phí: ";
+            fout << static_cast<int>(backtrack.second) << "\n";
+            fout << "Lộ trình: ";
+            for (int v : backtrack.first) fout << v << " ";
+            fout << "\n";
+        } else fout << "Không tìm thấy lộ trình\n";
+        fout << "Thời gian: " << backtrackTime << " ms\n\n";
+
+        // === DP ===
         fout << "==== DP ====\n";
         if (dpSuccess && dp.second >= 0.0) {
-            if (dp.second == minCost) {
-                fout << "Chi phí tối thiểu: " << static_cast<int>(dp.second) << "\n";
-            } else {
-                fout << "Chi phí: " << static_cast<int>(dp.second) << "\n";
-            }
+            if (dp.second == minCost) fout << "Chi phí tối thiểu: ";
+            else fout << "Chi phí: ";
+            fout << static_cast<int>(dp.second) << "\n";
             fout << "Lộ trình: ";
-            for (int v : dp.first) {
-                fout << v << " ";
-            }
+            for (int v : dp.first) fout << v << " ";
             fout << "\n";
-        } else if (!dpSuccess) {
-            fout << "Không tìm thấy lộ trình\n";
-        } else {
-            fout << "Không tìm thấy lộ trình\n";
-        }
-        fout << "Thời gian: " << dpTime << " ms\n";
+        } else fout << "Không tìm thấy lộ trình\n";
+        fout << "Thời gian: " << dpTime << " ms\n\n";
 
         fout.close();
         cout << "Kết quả chạy đã được viết vào output.txt !\n";
